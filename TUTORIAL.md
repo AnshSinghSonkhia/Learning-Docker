@@ -101,6 +101,9 @@ These steps help you manage and use Docker images efficiently in your workflow.
 
 - `-it`: Interactive Mode
 - `-a`: all 
+- `-d`: Detach Mode - Runs container in background
+- `-e`: used for declaring environment variables
+- `--name`: Used to give a custom name to container
 
 # Docker Commands
 
@@ -112,3 +115,87 @@ These steps help you manage and use Docker images efficiently in your workflow.
 - `mkdir NEW_FOLDER_NAME` - Create new folder inside docker container.
 - `exit` - Stop & Exit from the docker container.
 - `docker ps -a` - Get list of "all" containers.
+- `docker ps` - Get list of "running" containers.
+- `docker start CONTAINER_ID_OR_NAME` - start a particular container.
+- `docker stop CONTAINER_ID_OR_NAME` - stop a particular container.
+- `docker rm CONTAINER_NAME` - remove a particular container.
+- `docker rmi Image_NAME` - remove a particular image.
+
+# Pull an specific version
+
+```bash
+docker pull IMAGE_NAME:version
+```
+
+```bash
+docker pull mysql:8.0
+```
+
+# Layers of a Docker Image
+
+Docker images are built in layers, each representing a set of changes or additions. These layers stack on top of each other to form the final image used to create containers.
+
+- **Base Layer:** The foundational layer, often an operating system like Ubuntu or Alpine.
+- **Layer 1, Layer 2, ..., Layer n:** Each subsequent layer adds files, libraries, or configuration changes. These layers are read-only and shared across images to save space.
+- **Container Layer:** When you run a container from an image, Docker adds a writable container layer on top. This is the only layer where changes (like file edits or new installations) are allowed during runtime.
+
+> **Note:** All layers except the container layer are read-only. The container layer is writable and unique to each running container.
+
+## What Happens When You Install a Newer Version of an Already Installed Image?
+
+When you pull a newer version of an image that is already present on your system, Docker downloads only the layers that are different or updated. Existing layers that are unchanged are reused from your local cache, making the process efficient.
+
+- **Old Image Remains:** The previous version of the image is not deleted automatically. Both versions coexist unless you manually remove the older one.
+- **Tagging:** Each image version is identified by its tag (e.g., `node:18`, `node:20`). You can specify which version to use when running containers.
+- **Containers Unaffected:** Containers created from the older image continue to run as before. New containers will use the newer image if specified.
+- **Storage:** Multiple versions may consume more disk space, so it's good practice to remove unused images with `docker rmi`.
+
+**Example:**
+```sh
+docker pull node:20
+```
+This command installs Node.js version 20 alongside any existing Node.js images (e.g., version 18).
+
+> **Tip:** Use `docker images` to list all installed image versions and manage them as needed.
+
+---
+
+# Port Binding
+
+## Port Binding with the `-p` Flag
+
+The `-p` flag in Docker is used to map a port on your host machine to a port inside the Docker container. This allows you to access services running inside the container from your local machine or network.
+
+**Syntax:**
+```sh
+docker run -p HOST_PORT:CONTAINER_PORT IMAGE_NAME
+```
+- `HOST_PORT`: The port on your local machine.
+- `CONTAINER_PORT`: The port inside the container that your application listens on.
+
+**Example:**
+Suppose you want to run a MySQL container and access its database from your host machine. MySQL typically listens on port `3306` inside the container. To bind it to port `8080` on your host:
+
+```sh
+docker run -p 8080:3306 mysql:8.0
+```
+Now, you can connect to MySQL on `localhost:8080`.
+
+### Example: Running Old & New MySQL Images
+
+You can run multiple MySQL containers with different versions by specifying different ports:
+
+- **MySQL 5.7:**
+    ```sh
+    docker run -d --name mysql57 -p 5080:3306 mysql:5.7
+    ```
+    Access MySQL 5.7 at `localhost:5080`.
+
+- **MySQL 8.0:**
+    ```sh
+    docker run -d --name mysql80 -p 8080:3306 mysql:8.0
+    ```
+    Access MySQL 8.0 at `localhost:8080`.
+
+This approach allows you to run and test multiple versions of MySQL simultaneously without conflicts.
+
