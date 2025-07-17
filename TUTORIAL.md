@@ -26,7 +26,24 @@ Each app is isolated in its own environment, making development and deployment e
 
 A **Docker image** is a read-only template that contains the instructions for creating a Docker container. It includes the application code, runtime, libraries, environment variables, and configuration files needed to run the application.
 
+## Docker Container vs Docker Image
+
+### Key Differences
+
+| Feature            | Docker Image                                  | Docker Container                          |
+|--------------------|-----------------------------------------------|-------------------------------------------|
+| Definition         | Blueprint or template for containers          | Running instance of an image              |
+| State              | Static, read-only                             | Dynamic, can be started, stopped, deleted |
+| Purpose            | Used to create containers                     | Executes the application                  |
+| Persistence        | Does not change after creation                | Can have changes during runtime           |
+| Example            | `node:18` image from Docker Hub               | Container running Node.js app             |
+
+**Summary:**  
+A Docker image is like a snapshot or recipe, while a Docker container is the live, running environment created from that image.
+
 ## Why use Docker Images?
+
+We can create multiple containers with the same docker image
 
 - **Reproducibility:** Images ensure that containers are created with the exact same environment every time.
 - **Versioning:** Images can be versioned and tagged, making it easy to roll back or update applications.
@@ -79,3 +96,19 @@ A **Docker image** is a read-only template that contains the instructions for cr
     ```
 
 These steps help you manage and use Docker images efficiently in your workflow.
+
+# Flags used with docker in CMDs
+
+- `-it`: Interactive Mode
+- `-a`: all 
+
+# Docker Commands
+
+- `docker pull IMAGE_NAME`  - pull any publicly available docker image.
+- `docker images` - get list of all downloaded images.
+- `docker run IMAGE_NAME` - Create a container from any image.
+- `docker run -it IMAGE_NAME` - Run it in interactive mode.
+- `ls` - to get list of files & folders inside that docker container, which is running in interactive mode.
+- `mkdir NEW_FOLDER_NAME` - Create new folder inside docker container.
+- `exit` - Stop & Exit from the docker container.
+- `docker ps -a` - Get list of "all" containers.
